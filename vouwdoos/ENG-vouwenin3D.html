@@ -1,0 +1,407 @@
+import "https://zimjs.org/cdn/018/zim_three"
+import "https://zimjs.org/cdn/018/zim_pizzazz"
+new Frame(FULL, 1280, 720, white, dark, ready)
+funtion ready() {
+	//new Pic("https://i.imgur.com/3Y1dy5p.png").scaleTo().center()
+	F.loadAssets("gf_Roboto");
+	  F.on("complete",()=>{
+	    STYLE = {font:"Roboto"};
+	    
+	    class ButtonExtend extends Container {
+	        
+	        constructor() {
+	            
+	        super();
+	
+	        this.button=new Rectangle(220,80,purple,black,1,10)
+	        this.text=new Label("",30,"Roboto",white) // label in button
+	        
+	            
+	        this.centerText=function(){
+	            
+	            
+	            this.text.x=this.button.width/2-this.text.width/2
+	            this.text.y=this.button.height/2-this.text.height/2;
+	          
+	            
+	        }
+	        
+	        this.centerText()
+	        
+	        this.addChild(this.button,this.text)
+
+	        }
+	    }
+	    
+
+	    var modelsList=[
+
+	         ["kup",110],
+	        ["karePrizma",110],
+	        ["dikdortgenlerPrizma",110], // not o with umload!
+	        ["silindir",130],
+	    ]
+
+	    var modelOrder=0
+	    var animationFrameCount=110
+	    
+	    // buttonsTextureActive
+	    const buttonsTextureActive = new TextureActive(500,700,clear)
+
+
+	    const cubeButton = new ButtonExtend()
+	    cubeButton.text.text="cube"
+	    cubeButton.centerText()
+	    new createjs.ButtonHelper(cubeButton)
+
+	    const squarePrismButton = new ButtonExtend()
+	    squarePrismButton.text.text="tall box"
+	    squarePrismButton.centerText()
+	    new createjs.ButtonHelper(squarePrismButton)
+
+	    const rectangularPrismButton = new ButtonExtend()
+	    rectangularPrismButton.text.text="flat box"
+	    rectangularPrismButton.centerText()
+	    new createjs.ButtonHelper(rectangularPrismButton)
+
+	    const cylinderButton = new ButtonExtend()
+	    cylinderButton.text.text="cylinder"
+	    cylinderButton.centerText()
+	    new createjs.ButtonHelper(cylinderButton)
+
+	    var elementWindowList=[cubeButton,
+	                             squarePrismButton,
+	                             rectangularPrismButton,
+	                             cylinderButton]
+
+	    for(var i=0; i<elementWindowList.length; i++){
+
+	        elementWindowList[i].addEventListener("mousedown",buttonsClicked)
+	        elementWindowList[i].name=modelsList[i][0]
+	    }
+
+
+	    const list = new List({
+	        width:350, 
+	        height:450,
+	        color:"red",
+	        backdropColor:clear, ////// background color of the list 
+	        backgroundColor:clear, ///// list background color
+	        list:elementWindowList,
+	       
+	     }).center(buttonsTextureActive)
+	    .scaleTo(buttonsTextureActive,100,100);
+	    new Label({text:"animate\nunfoldings", align:CENTER}).pos(0,-70,CENTER,TOP,list);
+	F.madeWith({text:"ZIMjs KIDS SLATE"}).pos(-40,-70,LEFT,TOP,list).tap(()=>{zgo("https://zimjs.org/kids/slate", "_blank")});
+	   
+
+	    function buttonsClicked(e){
+	        
+	        slider.currentValue=0
+
+
+	        var modelIndex=elementWindowList.indexOf(e.currentTarget)
+	        
+
+	        addModel(modelsList[modelIndex][0])
+	        animationFrameCount=modelsList[modelIndex][1]
+	        
+	    }
+	    
+	    // sliderTextureActive 
+	    const sliderTextureActive = new TextureActive({
+	        width:500,
+	        height:135,
+	        color:blue.toAlpha(.1),
+	        color2:blue.toAlpha(.5),
+	        angle:90,
+	        borderColor:white,
+	        borderWidth:3,
+	        backingOrbit:false
+	    });   
+	    
+	    // warning triangle
+	    // new Triangle(sliderTextureActive.width*.7, sliderTextureActive.height*.7, -1, "red".toAlpha(.4), null, null, [0,8,6])
+	      // .pos(15,0,RIGHT,CENTER,sliderTextureActive);
+	 new Label("drag to see folding animation", 30,"Roboto", white).scaleTo(sliderTextureActive,90,80)
+	        .pos(0,10,CENTER,TOP,sliderTextureActive);
+	    new Label("< unfolded       closed >", 30,"Roboto", white).scaleTo(sliderTextureActive,90,80)
+	        .pos(0,10,CENTER,BOTTOM,sliderTextureActive);
+	    
+	    const slider = new Slider({
+	        min:0,
+	        max:135,
+	        step:1,
+	        barColor:light,
+	        currentValue:0,
+	        button:"circle"
+	    })
+	        .scaleTo(sliderTextureActive,90,80)
+	        .center(sliderTextureActive)       
+	        .change(()=>{
+
+	            let value = slider.currentValue/animationFrameCount; // Slider 0-1 percentage
+	          
+	         
+
+	            
+	            // if (mixer && action) {
+	            //     console.log(value)
+	            //     action.paused = false; // Pause to control animation
+	            //     mixer.setTime(value * duration); // Take animation to specific frame
+	            // }
+
+	            // action.paused = true;
+
+	            if (mixer && action) {
+
+	                action.paused = false;
+	                if (value >= 0.99) {
+	                    value=0.99
+	   
+	                }
+	        
+	                mixer.setTime(value * duration); // Move animation to relevant frame
+	                mixer.update(0.01); // Update so frame doesn't reset
+	            }
+	            action.paused = true;
+	            
+	        });
+
+	    
+	     // POSITION 
+	     const positions = [{x:150,y:150,z:300}, {x:0,y:0,z:150}, {x:-20,y:800,z:50}];
+	     const position = new TextureActive(300, 100, clear);
+	     const tabs = new Tabs({ 
+	        tabs:[1,2,3], 
+	        bgColor:black.toAlpha(.8), 
+	        color:white, 
+	        selectedBgColor:white.toAlpha(.8), 
+	        selectedColor:black, 
+	        rollBgColor:pink.toAlpha(.8), 
+	        spacing:15, 
+	        corner:[30,0,30,0],
+	        currentEnabled:true
+	    })
+	        .scaleTo(position,100,100)
+	        .center(position)
+	        .change(()=>{
+	            let p = positions[tabs.selectedIndex];
+	            animate({
+	                target:camera,
+	                props:{
+	                    "position.x":p.x,
+	                    "position.y":p.y,
+	                    "position.z":p.z
+	                },       
+	                animateCall:()=>{camera.lookAt(0,0,0);}
+	            });
+	            
+	        });
+
+
+	    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	    // THREEJS
+	   
+	    // Three() comes from the ZIM three helper module
+	    // to make renderer, scene and camera 
+	    // Traditionally, this module helps bring threejs into ZIM ;-) 
+	    // but we can still use the module to help make setting up easier
+	    // It also comes with OrbitControls, FirstPersonControls and GLTFLoader
+	    // This is optional - see https://zimjs.com/015/textureActive_raw.html for without Three()
+	   
+	    const three = new Three({
+	        width:window.innerWidth, 
+	        height:window.innerHeight, 
+	        //cameraPosition:new THREE.Vector3(150,150,300),
+	        cameraPosition:new THREE.Vector3(100,250,250),
+	        ortho:true,
+	        textureActive:true,
+	        colorManagement:true
+	    });
+	    
+	    const scene = three.scene;
+	    const camera = three.camera;
+	    const renderer = three.renderer;
+
+	    // for HUD
+	    const sceneOrtho = three.sceneOrtho;
+	    const cameraOrtho = three.cameraOrtho;
+
+
+	    // SKYBOX
+	    const skyTexture = new THREE.TextureLoader().load("https://i.imgur.com/G9jvNqL.png");
+	    const skyBoxGeometry = new THREE.SphereGeometry(100000, 32, 32);
+	    const skyBoxMaterial = new THREE.MeshBasicMaterial({map:skyTexture, side:THREE.BackSide});
+	    const skyBox = new THREE.Mesh(skyBoxGeometry, skyBoxMaterial);
+	    scene.add(skyBox);
+
+	    // Load model with GLTFLoader
+	    const loader = new GLTFLoader();
+
+
+
+	    
+	    var model;
+	    var modelLoaded=false
+	    var duration;
+	    
+	    let animationFinished = false;
+
+	    function addModel(modelName){
+
+	        loader.load("https://raw.githubusercontent.com/karelrosseel/model3d/master/vouwdoos/"+modelName+".glb", (gltf) => {
+
+	            scene.remove(model)
+
+	            model = gltf.scene;
+	            scene.add(model);
+	    
+	            model.position.set(0, 0, 0); // Position model in scene
+	            model.scale.set(40, 40, 40); // Scale model in scene
+	            modelLoaded=true
+	    
+	            if(modelLoaded){
+	    
+	                setupAnimation(model, gltf)
+	    
+	                
+	            }
+	    
+	        }, undefined, (error) => {
+	            console.error('Model cannot be loaded:', error);
+	        });
+	    
+
+	    }
+
+	    addModel("cube")
+
+
+
+	    let mixer;
+	    let action;
+	    let animationPlaying = false; // Variable to control whether animation is playing
+
+	    // Function to run when GLTF Model is loaded
+	    function setupAnimation(model, gltf) {
+
+	        mixer = new THREE.AnimationMixer(model);
+	        const clip = gltf.animations[0]; // Select first animation
+	        action = mixer.clipAction(clip);
+
+	        //action.setLoop(THREE.LoopOnce, 1); // Play only once
+	        //action.clampWhenFinished = true;   // Stay on last frame when finished
+	        duration = clip.duration;
+
+	        action.play(); // Start animation but we don't want it to progress
+	        mixer.setTime(0); // Take animation to beginning
+	        action.paused = true; // Stop animation
+
+
+	    }
+
+
+
+
+	    const clock =new THREE.Clock()
+
+	    function animate() {
+
+	        
+	        requestAnimationFrame(animate);
+	        //renderer.render(scene, camera);
+	        
+
+	        if(modelLoaded){
+
+	            //mixer.update(clock.getDelta())
+
+	            let delta = clock.getDelta(); // Calculate time difference
+	            mixer.update(delta); // Update animation
+
+
+	            //model.rotation.y+=.005
+	        }
+	        
+	    }
+
+	    animate();
+
+	    // CONTROLS
+	    // https://threejs.org/docs/#examples/en/controls/OrbitControls
+	    const controls = new OrbitControls(camera, renderer.domElement);
+	    controls.enableDamping = true;
+		controls.dampingFactor = 0.1;
+	    three.preRender = ()=>{controls.update();}
+	 
+
+
+
+	    // animate will add a rate property which can be used to control the animation rate - 1 is normal, 2 is twice as fast, etc.
+	  
+
+	    // LIGHTS 
+	    // do not use the variable, light, as it will overwrite ZIM color light
+	    // you can force zim namespace with zns=true in a script before loading ZIM
+	    // but it is annoying to put zim.Frame, zim.Circle, zim.red, etc.
+	    // Also see https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733
+	    // Also, if using a SpotLight then set the decay = 0
+	    
+	    const light1 = new THREE.DirectionalLight(0xffffff, 1*Math.PI);
+	    light1.position.set(100,200,100);
+	    scene.add(light1);
+	    
+	    const light2 = new THREE.AmbientLight(0xffffff, .5*Math.PI);
+	    scene.add(light2);
+
+
+	    // TEXTUREACTIVES
+	    // Create manager for TextureActive objects - see https://zimjs.com/docs.html?item=TextureActives
+	    // use the t key to toggle to the actual ZIM canvas - can prevent this with toggleKey:-1 or choose another key
+	    // Note we optionally set the active layer to 1 so that means we need to match the layer when adding meshes later on
+	    // Parameters are actives, threejs, zimThree, renderer, scene, camera, controls, layers, near, far, ignoreList, toggleKey
+
+	    const textureActivesOrtho = new TextureActives([sliderTextureActive, buttonsTextureActive, position], THREE, three, renderer, sceneOrtho, cameraOrtho, controls, 1);
+	    // textureActivesOrtho.manager.toggleKey = -1; // turn off the toggle key
+
+
+	    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	    // SCENEORTHO - TextureActive work on sceneOrtho with HUD
+
+	    // HUD 
+	    // When TextureActive is to be mapped on a Plane, we can use the ZIM Three makePanel() method 
+	    // Parameters are textureActive, textureActives, scale (default .5), curve, opacity, material, buttonsTextureActivepace
+	    // If the TextureActives object has layers set, the mesh layer automatically will match the first layer set
+	    
+	    // pos() has x, y, horizontal, vertical, gutter parameters
+	    // with gutter being the minimum the left and right will squeeze together (to prevent crossing one another)
+
+	 
+
+	    // Add HUD to group so can easily remove and add with HUD CheckBox
+	    const hud = new THREE.Group();
+	    sceneOrtho.add(hud);
+
+	        // buttonsTextureActive 
+	        const HUD_buttonsTextureActive = three.makePanel(buttonsTextureActive, textureActivesOrtho).pos(0,0,LEFT,TOP);
+	        hud.add(HUD_buttonsTextureActive); 
+
+	        // sliderTextureActive 
+	        const HUD_sliderTextureActive = three.makePanel(sliderTextureActive, textureActivesOrtho).pos(35,35,LEFT,BOTTOM,600);
+	        hud.add(HUD_sliderTextureActive); 
+
+	        // POSITION 
+	        const HUD_position = three.makePanel(position, textureActivesOrtho).pos(35,35,RIGHT,TOP,500);
+	        //hud.add(HUD_position); 
+
+
+
+	    // THROTTLE TEST
+	    // on some older mobiles updating the cache constantly can bog at 60 fps
+	    let fps; const fpsT = Ticker.add(()=>{fps = Ticker.getFPS();});
+	    timeout(2, ()=>{if (fps < 50) {Ticker.setFPS(30);}; Ticker.remove(fpsT);});
+
+	    });
+	  
+}
